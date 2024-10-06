@@ -2,8 +2,8 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 
 import { PersonaController } from './persona.controller';
-import { PersonaService } from './persona.service';
 import { Persona, PersonaSchema } from './persona.schema';
+import { PersonaService } from './persona.service';
 
 @Module({
   imports: [
