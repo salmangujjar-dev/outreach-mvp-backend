@@ -6,6 +6,8 @@ import {
   Delete,
   Body,
   Param,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 
 import { CreatePersonaDto, UpdatePersonaDto } from './persona.dto';
@@ -17,17 +19,29 @@ export class PersonaController {
 
   @Post()
   async create(@Body() createPersonaDto: CreatePersonaDto) {
-    return this.personaService.create(createPersonaDto);
+    try {
+      return await this.personaService.create(createPersonaDto);
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
   }
 
   @Get()
   async findAll() {
-    return this.personaService.findAll();
+    try {
+      return await this.personaService.findAll();
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   @Get(':id')
   async findOne(@Param('id') id: string) {
-    return this.personaService.findOne(id);
+    try {
+      return await this.personaService.findOne(id);
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+    }
   }
 
   @Put(':id')
@@ -35,11 +49,19 @@ export class PersonaController {
     @Param('id') id: string,
     @Body() updatePersonaDto: UpdatePersonaDto,
   ) {
-    return this.personaService.update(id, updatePersonaDto);
+    try {
+      return await this.personaService.update(id, updatePersonaDto);
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
   }
 
   @Delete(':id')
   async remove(@Param('id') id: string) {
-    return this.personaService.remove(id);
+    try {
+      return await this.personaService.remove(id);
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+    }
   }
 }

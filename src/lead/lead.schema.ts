@@ -3,88 +3,88 @@ import mongoose, { Document } from 'mongoose';
 
 import { RevenueStages, CompanySize } from './lead.dto';
 
-@Schema()
+@Schema({ collection: 'Lead' })
 export class Lead extends Document {
   @Prop({ required: true })
-  unique_identifier: string;
+  uniqueIdentifier: string;
 
   @Prop({ required: true })
-  first_name: string;
+  firstName: string;
 
   @Prop({ required: true })
-  last_name: string;
+  lastName: string;
 
   @Prop({ required: true })
-  full_name: string;
+  fullName: string;
 
   @Prop()
-  linkedin_url: string;
+  linkedinUrl: string;
 
   @Prop()
-  linkedin_username: string;
+  linkedinUsername: string;
 
   @Prop()
-  linkedin_id: string;
+  linkedinId: string;
 
   @Prop()
-  twitter_url: string;
+  twitterUrl: string;
 
   @Prop()
-  twitter_username: string;
+  twitterUsername: string;
 
   @Prop()
-  work_email: string;
+  workEmail: string;
 
   @Prop()
   industry: string;
 
   @Prop()
-  job_title: string;
+  jobTitle: string;
 
   @Prop()
-  job_company_name: string;
+  jobCompanyName: string;
 
   @Prop()
-  job_company_website: string;
+  jobCompanyWebsite: string;
 
   @Prop()
-  job_company_industry: string;
+  jobCompanyIndustry: string;
 
   @Prop()
-  job_company_12mo_employee_growth_rate: number;
+  jobCompany12moEmployeeGrowthRate: number;
 
   @Prop()
-  job_company_total_funding_raised: number;
+  jobCompanyTotalFundingRaised: number;
 
   @Prop({ type: String, enum: RevenueStages })
-  job_company_inferred_revenue: RevenueStages | null;
+  jobCompanyInferredRevenue: RevenueStages | null;
 
   @Prop()
-  job_company_employee_count: number;
+  jobCompanyEmployeeCount: number;
 
   @Prop()
-  job_last_changed: string;
+  jobLastChanged: string;
 
   @Prop()
-  job_last_verified: string;
+  jobLastVerified: string;
 
   @Prop()
-  job_start_date: string;
+  jobStartDate: string;
 
   @Prop({ type: String, enum: CompanySize })
-  job_company_size: CompanySize | null;
+  jobCompanySize: CompanySize | null;
 
   @Prop()
-  job_company_founded: number;
+  jobCompanyFounded: number;
 
   @Prop()
-  job_company_location_region: string;
+  jobCompanyLocationRegion: string;
 
   @Prop()
-  location_name: string;
+  locationName: string;
 
   @Prop()
-  location_country: string;
+  locationCountry: string;
 
   @Prop([String])
   skills: string[];
@@ -92,20 +92,20 @@ export class Lead extends Document {
   @Prop({
     type: {
       school: String,
-      linkedin_url: String,
-      start_date: String,
-      end_date: String,
-      degree_name: String,
+      linkedinUrl: String,
+      startDate: String,
+      endDate: String,
+      degreeName: String,
       raw: [String],
       summary: String,
     },
   })
   education: {
     school: string;
-    linkedin_url: string;
-    start_date: string | null;
-    end_date: string | null;
-    degree_name: string | null;
+    linkedinUrl: string;
+    startDate: string | null;
+    endDate: string | null;
+    degreeName: string | null;
     raw: string[];
     summary: string;
   };
@@ -114,10 +114,10 @@ export class Lead extends Document {
   gender: string;
 
   @Prop()
-  company_employees: string;
+  companyEmployees: string;
 
   @Prop()
-  data_provider: string;
+  dataProvider: string;
 
   _id: mongoose.Types.ObjectId;
 }

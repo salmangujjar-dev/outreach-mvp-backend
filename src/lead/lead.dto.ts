@@ -10,23 +10,24 @@ export enum CompanySize {
 }
 
 export enum RevenueStages {
-  '$0-$1M' = '$0-$1M',
-  '$1M-$10M' = '$1M-$10M',
-  '$10M-$25M' = '$10M-$25M',
-  '$25M-$50M' = '$25M-$50M',
-  '$50M-$100M' = '$50M-$100M',
-  '$100M-$250M' = '$100M-$250M',
-  '$250M-$500M' = '$250M-$500M',
-  '$500M-$1B' = '$500M-$1B',
-  '$1B-$10B' = '$1B-$10B',
-  '$10B+' = '$10B+',
+  '$0-$1m' = '$0-$1m',
+  '$1m-$10m' = '$1m-$10m',
+  '$10m-$25m' = '$10m-$25m',
+  '$25m-$50m' = '$25m-$50m',
+  '$50m-$100m' = '$50m-$100m',
+  '$100m-$250m' = '$100m-$250m',
+  '$250m-$500m' = '$250m-$500m',
+  '$500m-$1b' = '$500m-$1b',
+  '$1b-$10b' = '$1b-$10b',
+  '$10b+' = '$10b+',
 }
 
-export class LeadDTO {
-  unique_identifier: string;
+export class PDLDTO {
+  id: string;
   first_name: string;
   last_name: string;
   full_name: string;
+  sex: string;
   linkedin_url: string;
   linkedin_username: string;
   linkedin_id: string;
@@ -63,6 +64,49 @@ export class LeadDTO {
   gender: string;
   company_employees: string;
   data_provider: string;
+}
+
+export class LeadDTO {
+  uniqueIdentifier: string;
+  firstName: string;
+  lastName: string;
+  fullName: string;
+  linkedinUrl: string;
+  linkedinUsername: string;
+  linkedinId: string;
+  twitterUrl: string;
+  twitterUsername: string;
+  workEmail: string;
+  industry: string;
+  jobTitle: string;
+  jobCompanyName: string;
+  jobCompanyWebsite: string;
+  jobCompanyIndustry: string;
+  jobCompany12moEmployeeGrowthRate: number;
+  jobCompanyTotalFundingRaised: number;
+  jobCompanyInferredRevenue: RevenueStages | null;
+  jobCompanyEmployeeCount: number;
+  jobLastChanged: string;
+  jobLastVerified: string;
+  jobStartDate: string;
+  jobCompanySize: CompanySize | null;
+  jobCompanyFounded: number;
+  jobCompanyLocationRegion: string;
+  locationName: string;
+  locationCountry: string;
+  skills: string[];
+  education: {
+    school: string;
+    linkedinUrl: string;
+    startDate: string | null;
+    endDate: string | null;
+    degreeName: string | null;
+    raw: string[];
+    summary: string;
+  };
+  gender: string;
+  companyEmployees: string;
+  dataProvider: string;
 }
 
 export class LeadResponseDTO {

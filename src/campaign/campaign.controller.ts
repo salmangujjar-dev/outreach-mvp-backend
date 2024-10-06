@@ -6,11 +6,18 @@ import {
   Param,
   Put,
   Delete,
+  Patch,
 } from '@nestjs/common';
 
-import { TCreateCampaign } from './campaign.dto';
+import {
+  TCreateCampaign,
+  TSearchLeads,
+  TSearchLeadsResponse,
+} from './campaign.dto';
 import { Campaign } from './campaign.schema';
 import { CampaignService } from './campaign.service';
+import { Lead } from 'src/lead/lead.schema';
+import { LeadBridge } from 'src/leadBridge/leadBridge.schema';
 
 @Controller('campaign')
 export class CampaignController {
@@ -42,5 +49,28 @@ export class CampaignController {
   @Delete(':id')
   remove(@Param('id') id: string): Promise<Campaign> {
     return this.campaignService.remove(id);
+  }
+
+  @Post(':id/search-leads')
+  async searchLeads(
+    @Param('id') id: string,
+    @Body() filters: TSearchLeads,
+  ): Promise<void | TSearchLeadsResponse> {
+    return this.campaignService.searchLeads(id, filters);
+  }
+
+  @Get(':id/leads')
+  async getLeads(@Param('id') id: string): Promise<Lead[]> {
+    return await this.campaignService.getLeads(id);
+  }
+
+  @Get(':id/emails')
+  async getEmails(@Param('id') id: string): Promise<LeadBridge[]> {
+    return await this.campaignService.getLeadsWithEmails(id);
+  }
+
+  @Get(':id/generate-emails')
+  async generateEmails(@Param('id') id: string) {
+    return this.campaignService.generateEmails(id);
   }
 }

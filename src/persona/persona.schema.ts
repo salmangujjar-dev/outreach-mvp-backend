@@ -5,17 +5,17 @@ export type PersonaDocument = Persona & Document;
 
 @Schema()
 class ICPQuestions {
-  @Prop({ required: true })
+  @Prop()
   usp: string;
 
-  @Prop({ required: true })
+  @Prop()
   industry: string;
 
-  @Prop({ required: true })
+  @Prop()
   customerSupport: string;
 }
 
-@Schema()
+@Schema({ collection: 'Persona' })
 export class Persona {
   @Prop({ required: true })
   name: string;
@@ -23,5 +23,4 @@ export class Persona {
   @Prop({ type: ICPQuestions, required: true })
   icpQuestions: ICPQuestions;
 }
-
 export const PersonaSchema = SchemaFactory.createForClass(Persona);
