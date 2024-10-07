@@ -71,6 +71,7 @@ export class CampaignController {
 
   @Get(':id/generate-emails')
   async generateEmails(@Param('id') id: string) {
-    return this.campaignService.generateEmails(id);
+    this.campaignService.generateEmails(id);
+    return { success: true, message: 'Email Generation Initiated!' };
   }
 }

@@ -1,6 +1,6 @@
 // src/campaign/campaign-cron.service.ts
 import { Injectable, Logger } from '@nestjs/common';
-import { Cron } from '@nestjs/schedule';
+import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Campaign, CAMPAIGN_STATUS } from './campaign.schema';
@@ -25,43 +25,73 @@ export class CampaignCronService {
     // });
     // this.sendMail(recipientEmail, email);
   }
-
   @Cron('0 */15 * * * *')
   async processCampaigns() {
     this.logger.log('Processing all campaigns...');
-    const today = new Date();
+    const now = new Date().toISOString();
     const campaigns = await this.campaignModel
       .find({
-        lastProcessed: { $lt: today },
-        status: { $in: [CAMPAIGN_STATUS.ACTIVE, CAMPAIGN_STATUS.IN_PROCESS] },
+        $and: [
+          {
+            $or: [
+              { lastProcessed: { $lt: now } },
+              { lastProcessed: { $eq: null } },
+            ],
+          },
+          { startDate: { $lte: now } },
+          {
+            status: {
+              $in: [CAMPAIGN_STATUS.ACTIVE, CAMPAIGN_STATUS.IN_PROCESS],
+            },
+          },
+        ],
       })
       .populate({
         path: 'leads',
-        populate: { path: 'lead', populate: 'emails' },
+        populate: 'lead email',
       })
       .exec();
 
-    const campaignIds = campaigns.map((campaign) => campaign.id);
+    const campaignIds = campaigns.map((campaign) => campaign._id);
     await this.campaignModel.updateMany(
       { _id: { $in: campaignIds } },
       {
-        $set: { lastProcessed: new Date(), status: CAMPAIGN_STATUS.IN_PROCESS },
+        $set: {
+          lastProcessed: new Date().toISOString(),
+          status: CAMPAIGN_STATUS.IN_PROCESS,
+        },
       },
     );
 
     for (const campaign of campaigns) {
       this.logger.log(`Processing campaign with ID: ${campaign._id}`);
 
-      const leadsToProcess = campaign.leads.slice(0, campaign.sendLimit);
+      let totalEmailsSent = 0;
+      const leadsToProcess = campaign.leads
+        .filter((lead) => lead.email.sent !== true)
+        .slice(0, campaign.sendLimit);
       for (const leadBridge of leadsToProcess) {
         const lead = leadBridge.lead;
         try {
           await this.sendMail(lead.workEmail, leadBridge.email);
+          totalEmailsSent += 1;
           this.logger.log(`Email sent to: ${lead.workEmail}`);
         } catch (error) {
           this.logger.error(`Error sending email to ${lead.workEmail}:`, error);
         }
       }
+
+      await this.campaignModel.findByIdAndUpdate(campaign._id, {
+        $inc: {
+          totalSent: totalEmailsSent,
+          totalPending: -totalEmailsSent,
+        },
+        ...(campaign.totalSent + totalEmailsSent === campaign.totalEmails && {
+          $set: {
+            status: CAMPAIGN_STATUS.COMPLETED,
+          },
+        }),
+      });
     }
   }
 
@@ -88,12 +118,14 @@ export class CampaignCronService {
       await this.emailModel.findByIdAndUpdate(email._id, {
         $set: { sent: true, sentOn: new Date() },
       });
+
       this.logger.log(`Email successfully sent to ${workEmail}`);
     } catch (error) {
       await this.emailModel.findByIdAndUpdate(email._id, {
         $set: { bounced: true },
       });
       this.logger.error(`Failed to send email to ${workEmail}:`, error);
+      throw error;
     }
   }
 }

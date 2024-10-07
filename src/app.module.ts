@@ -8,9 +8,11 @@ import { CampaignModule } from './campaign/campaign.module';
 import { PersonaModule } from './persona/persona.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MailerModule } from '@nestjs-modules/mailer';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     ConfigModule.forRoot({
       envFilePath: '.env',
       isGlobal: true,

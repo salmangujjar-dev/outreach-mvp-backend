@@ -93,6 +93,8 @@ export class CampaignService {
         throw new Error('Campaign has no persona.');
       }
 
+      let totalEmailsGenerated = 0;
+
       const emailPromises = campaign.leads.map(async (lead) => {
         try {
           const response = await axios.post(
@@ -109,6 +111,8 @@ export class CampaignService {
             },
           );
 
+          console.log({ email: response.data });
+          totalEmailsGenerated += 1;
           const emailData = {
             campaign: campaign._id,
             body: response.data.body,
@@ -129,8 +133,13 @@ export class CampaignService {
           );
         }
       });
+      const leads = await Promise.all(emailPromises);
 
-      return await Promise.all(emailPromises);
+      await this.campaignModel.findByIdAndUpdate(id, {
+        $set: { totalEmails: totalEmailsGenerated },
+      });
+
+      return leads;
     } catch (error) {
       this.logger.error(error);
     }
@@ -233,6 +242,7 @@ export class CampaignService {
           $set: {
             stepper: CAMPAIGN_STEP.LEADS,
             leads: insertLeadBridges.map((leadBridge) => leadBridge._id),
+            totalLeads: insertedLeads.length,
           },
         });
 
