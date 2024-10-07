@@ -22,7 +22,7 @@ export class LeadBridge {
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Lead', required: true })
   lead: Lead;
 
-  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Email', required: true })
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Email', required: false })
   email: Email;
 }
 

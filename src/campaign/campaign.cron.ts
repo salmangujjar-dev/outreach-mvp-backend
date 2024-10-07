@@ -55,16 +55,11 @@ export class CampaignCronService {
       const leadsToProcess = campaign.leads.slice(0, campaign.sendLimit);
       for (const leadBridge of leadsToProcess) {
         const lead = leadBridge.lead;
-        if (lead.workEmail) {
-          try {
-            await this.sendMail(lead.workEmail, leadBridge.email);
-            this.logger.log(`Email sent to: ${lead.workEmail}`);
-          } catch (error) {
-            this.logger.error(
-              `Error sending email to ${lead.workEmail}:`,
-              error,
-            );
-          }
+        try {
+          await this.sendMail(lead.workEmail, leadBridge.email);
+          this.logger.log(`Email sent to: ${lead.workEmail}`);
+        } catch (error) {
+          this.logger.error(`Error sending email to ${lead.workEmail}:`, error);
         }
       }
     }
