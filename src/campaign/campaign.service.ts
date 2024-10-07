@@ -110,8 +110,6 @@ export class CampaignService {
             },
           );
 
-          this.logger.log({ response });
-
           const emailData = {
             campaign: campaign._id,
             body: response.data.body,
