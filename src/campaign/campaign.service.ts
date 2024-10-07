@@ -92,9 +92,8 @@ export class CampaignService {
       if (!campaign.persona) {
         throw new Error('Campaign has no persona.');
       }
-      console.log({ campaign });
 
-      const emailPromises = campaign.leads.slice(0, 1).map(async (lead) => {
+      const emailPromises = campaign.leads.map(async (lead) => {
         try {
           const response = await axios.post(
             this.aiServerUrl,
