@@ -7,7 +7,7 @@ import { Email } from 'src/email/email.schema';
 
 export type LeadBridgeDocument = LeadBridge & Document;
 
-@Schema({ collection: 'LeadBridge' })
+@Schema({ collection: 'LeadBridge', timestamps: true })
 export class LeadBridge {
   @Prop({ type: MongooseSchema.Types.ObjectId, auto: true })
   _id: MongooseSchema.Types.ObjectId;

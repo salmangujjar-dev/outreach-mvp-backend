@@ -19,7 +19,21 @@ export enum CAMPAIGN_STATUS {
   COMPLETED = 'COMPLETED',
 }
 
-@Schema({ collection: 'Campaign' })
+class LinkedIn {
+  @Prop({ required: true })
+  li_at: string;
+
+  @Prop({ required: true })
+  JSESSIONID: string;
+
+  @Prop({ required: true })
+  messageTemplate: string;
+
+  @Prop({ default: true })
+  isValid: boolean;
+}
+
+@Schema({ collection: 'Campaign', timestamps: true })
 export class Campaign extends Document {
   @Prop({ required: true })
   name: string;
@@ -45,6 +59,9 @@ export class Campaign extends Document {
 
   @Prop({ required: true, enum: CAMPAIGN_STEP, default: CAMPAIGN_STEP.TARGET })
   stepper: CAMPAIGN_STEP;
+
+  @Prop({ type: LinkedIn })
+  linkedin: LinkedIn;
 
   @Prop({ required: true })
   sendLimit: number;

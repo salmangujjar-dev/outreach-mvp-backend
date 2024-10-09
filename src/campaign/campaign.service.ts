@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
 import axios from 'axios';
-import { Model } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 
 import { LeadDTO, PDLDTO } from 'src/lead/lead.dto';
 import { Lead } from 'src/lead/lead.schema';
@@ -34,8 +34,22 @@ export class CampaignService {
   }
 
   async create(createCampaignDto: TCreateCampaign): Promise<Campaign> {
-    const createdCampaign = new this.campaignModel(createCampaignDto);
-    return createdCampaign.save();
+    try {
+      const { linkedin, ...campaignData } = createCampaignDto;
+      const createdCampaign = new this.campaignModel({
+        ...campaignData,
+        ...(linkedin && {
+          linkedin: {
+            ...linkedin,
+            isValid: true,
+          },
+        }),
+      });
+      return await createdCampaign.save();
+    } catch (error) {
+      this.logger.error('Error creating campaign', error);
+      throw new Error('Error creating campaign');
+    }
   }
 
   async findAll(): Promise<Campaign[]> {
@@ -56,7 +70,13 @@ export class CampaignService {
   }
 
   async remove(id: string): Promise<Campaign> {
-    return this.campaignModel.findByIdAndDelete(id).exec();
+    await this.leadBridgeModel
+      .deleteMany({ campaign: new mongoose.Types.ObjectId(id) })
+      .exec();
+    await this.emailModel
+      .deleteMany({ campaign: new mongoose.Types.ObjectId(id) })
+      .exec();
+    return await this.campaignModel.findByIdAndDelete(id).exec();
   }
 
   async getLeads(id: string): Promise<Lead[]> {
@@ -111,7 +131,6 @@ export class CampaignService {
             },
           );
 
-          console.log({ email: response.data });
           totalEmailsGenerated += 1;
           const emailData = {
             campaign: campaign._id,
@@ -136,7 +155,10 @@ export class CampaignService {
       const leads = await Promise.all(emailPromises);
 
       await this.campaignModel.findByIdAndUpdate(id, {
-        $set: { totalEmails: totalEmailsGenerated },
+        $set: {
+          totalEmails: totalEmailsGenerated,
+          totalPending: totalEmailsGenerated,
+        },
       });
 
       return leads;

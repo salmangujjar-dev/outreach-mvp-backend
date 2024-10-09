@@ -15,7 +15,7 @@ class ICPQuestions {
   customerSupport: string;
 }
 
-@Schema({ collection: 'Persona' })
+@Schema({ collection: 'Persona', timestamps: true })
 export class Persona {
   @Prop({ required: true })
   name: string;

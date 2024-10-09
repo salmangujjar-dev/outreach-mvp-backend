@@ -6,7 +6,6 @@ import {
   Param,
   Put,
   Delete,
-  Patch,
 } from '@nestjs/common';
 
 import {

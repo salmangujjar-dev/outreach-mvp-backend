@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document } from 'mongoose';
 import { Campaign } from 'src/campaign/campaign.schema';
 
-@Schema({ collection: 'Email' })
+@Schema({ collection: 'Email', timestamps: true })
 export class Email extends Document {
   @Prop({
     type: mongoose.Schema.Types.ObjectId,

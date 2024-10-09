@@ -3,7 +3,7 @@ import mongoose, { Document } from 'mongoose';
 
 import { RevenueStages, CompanySize } from './lead.dto';
 
-@Schema({ collection: 'Lead' })
+@Schema({ collection: 'Lead', timestamps: true })
 export class Lead extends Document {
   @Prop({ required: true })
   uniqueIdentifier: string;
